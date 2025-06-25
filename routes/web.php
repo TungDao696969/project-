@@ -31,3 +31,7 @@ Route::group([
     Route::resource('products', ProductController::class);
 
 });
+
+Route::get('/', function () {
+    return redirect()->route('client.home');
+});
