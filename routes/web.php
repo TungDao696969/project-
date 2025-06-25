@@ -35,3 +35,7 @@ Route::group([
 Route::get('/', function () {
     return redirect()->route('client.home');
 });
+
+Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
