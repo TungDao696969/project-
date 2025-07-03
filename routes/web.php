@@ -39,3 +39,10 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+
+
+Route::group(['prefix' => 'cart', 'as' => 'cart.', 'middleware' => 'auth'], function () {
+    Route::get('list-cart', [CartController::class, 'listCart'])->name('listCart');
+    Route::post('add-cart', [CartController::class, 'addToCart'])->name('addToCart');
+});
