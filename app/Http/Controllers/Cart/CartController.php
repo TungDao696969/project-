@@ -92,7 +92,40 @@ class CartController extends Controller
 
     return redirect()->route('cart.listCart')->with('success', 'Đã thêm sản phẩm vào giỏ hàng');
 }
-
+public function remove($id) {
+        try {
+            // Tìm chi tiết giỏ hàng
+            $cartDetail = CartDetail::with('cart')->find($id);
+            
+            // Kiểm tra nếu không tìm thấy chi tiết giỏ hàng
+            if (!$cartDetail) {
+                return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng');
+            }
+            
+            // Kiểm tra xem giỏ hàng có thuộc về người dùng hiện tại không
+            if ($cartDetail->cart->user_id != Auth::id()) {
+                return redirect()->back()->with('error', 'Bạn không có quyền xóa sản phẩm này');
+            }
+            
+            // Lưu lại cart_id để cập nhật tổng giá
+            $cartId = $cartDetail->cart_id;
+            
+            // Xóa chi tiết giỏ hàng
+            $cartDetail->delete();
+            
+            // Cập nhật tổng giá giỏ hàng
+            $cart = Cart::find($cartId);
+            if ($cart) {
+                $cart->total_price = $cart->details->sum('total_price');
+                $cart->save();
+            }
+            
+            return redirect()->back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng');
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
 
 
     
